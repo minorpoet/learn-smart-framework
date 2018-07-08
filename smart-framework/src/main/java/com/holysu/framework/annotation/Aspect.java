@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 public @interface Aspect {
 
     /**
-     * 注解
+     * 带有此注解的为目标类
      * @return
      */
     Class<? extends Annotation> value();

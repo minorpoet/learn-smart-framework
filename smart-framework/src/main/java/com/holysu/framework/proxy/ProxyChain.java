@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 代理链
+ * 代理链 （Proxy 代理执行 doProxy方法的入参）
  * @author minorpoet 2018/7/7
  */
 public class ProxyChain {
@@ -47,9 +47,10 @@ public class ProxyChain {
     public Object doProxyChain() throws Throwable{
         Object methodResult;
         if(proxyIndex < proxyList.size()){
+            // 先
             methodResult = proxyList.get(proxyIndex++).doProxy(this);
         }else{
-            // 利用 cglib 代理调用
+            // 最终利用 cglib 代理调用目标方法
             methodResult = methodProxy.invokeSuper(targetObject, methodParams);
         }
         return methodResult;
