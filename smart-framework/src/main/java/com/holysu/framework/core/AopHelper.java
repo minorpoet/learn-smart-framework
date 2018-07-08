@@ -1,9 +1,11 @@
 package com.holysu.framework.core;
 
 import com.holysu.framework.annotation.Aspect;
+import com.holysu.framework.annotation.Service;
 import com.holysu.framework.proxy.AspectProxy;
 import com.holysu.framework.proxy.Proxy;
 import com.holysu.framework.proxy.ProxyManager;
+import com.holysu.framework.proxy.TransactionProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +61,17 @@ public class AopHelper {
      */
     private static Map<Class<?>, Set<Class<?>>> createProxyMap() {
         Map<Class<?>, Set<Class<?>>> proxyMap = new HashMap<>();
-        // 先获取继承 AspectProxy 的代理类
+        addAspectProxy(proxyMap);
+        addTransactionProxy(proxyMap);
+        return proxyMap;
+    }
+
+    /**
+     * 获取继承 AspectProxy 的代理类
+     *
+     * @param proxyMap
+     */
+    private static void addAspectProxy(Map<Class<?>, Set<Class<?>>> proxyMap) {
         Set<Class<?>> proxyClassSet = ClassHelper.getClassSetBySuper(AspectProxy.class);
         for (Class<?> proxyClass : proxyClassSet) {
             if (proxyClass.isAnnotationPresent(Aspect.class)) {
@@ -69,8 +81,17 @@ public class AopHelper {
                 proxyMap.put(proxyClass, targetClassSet);
             }
         }
-        return proxyMap;
     }
+
+    /**
+     * 事务代理所有 Service 类
+     * @param proxyMap
+     */
+    private static void addTransactionProxy(Map<Class<?>, Set<Class<?>>> proxyMap){
+        Set<Class<?>> serviceClassSet = ClassHelper.getClassSetByAnnocation(Service.class);
+        proxyMap.put(TransactionProxy.class,  serviceClassSet);
+    }
+
 
     /**
      * 获取目标类和代理对象的映射
